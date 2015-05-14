@@ -31,6 +31,7 @@ import org.gradle.api.tasks.TaskExecutionException
 import org.gradle.util.CollectionUtils
 import org.ysb33r.gradle.gradletest.internal.Infrastructure
 import org.ysb33r.gradle.gradletest.internal.TestRunner
+import org.gradle.api.tasks.testing.TestDescriptor
 
 /**
  * @author Schalk W. Cronjé
@@ -111,13 +112,26 @@ class GradleTest extends DefaultTask {
         if(testRunners.empty) {
             return null
         }
+        testRunners.collect { TestRunner run -> run.testResult }
 
-        testRunners.collect { TestRunner run ->
-            [ getTestName : {run.testName},
-              getGradleVersion : {run.version},
-              getPassed : {run.execResult.exitValue == 0}
-            ] as CompatibilityTestResult
+//        testRunners.collect { TestRunner run ->
+//            [ getTestName : {run.testName},
+//              getGradleVersion : {run.version},
+//              getPassed : {run.execResult.exitValue == 0}
+//            ] as CompatibilityTestResult
+//        }
+    }
+
+    /** Get test descriptions for all tests
+     *
+     * @return A list if {@code TestDescriptor} objects  (or null if task has not yet executed).
+     * @since 1.0
+     */
+    def getTestDescriptors() {
+        if(testRunners.empty) {
+            return null
         }
+        testRunners.collect { TestRunner run -> run.testDescriptor }
     }
 
     @TaskAction

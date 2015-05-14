@@ -97,12 +97,14 @@ class GradleTestIntegrationSpec extends Specification {
         results[1].passed
         results[1].gradleVersion == project.gradle.gradleVersion
         results[1].testName == 'simpleTest'
+        false // Need to handle TestResult
 
         and:
         new File(expectedOutputDir,'failureTest').exists()
         !results[0].passed
         results[0].gradleVersion == project.gradle.gradleVersion
         results[0].testName == 'failureTest'
+        false // Need to handle TestResult
     }
 
 }

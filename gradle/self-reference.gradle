@@ -4,10 +4,19 @@
 // will be disabled
 
 if(!project.properties.DISABLE_GRADLETEST) {
+
+    // This might be confusing to people who have used the self-referencing trick before
+    // Gradle does not directly make JARs in the lib/plugins fodler available at this point in the gradle script.
+    // Therefore we need to create new classloader and add the jar we need.
+    def selfReferencingClassLoader = new URLClassLoader(
+        [ new File("${gradle.gradleHomeDir}/lib/plugins/gradle-plugins-${gradle.gradleVersion}.jar").toURI().toURL()].toArray(new URL[1]),
+        project.gradle.class.classLoader as URLClassLoader
+    )
+
     apply plugin: new GroovyScriptEngine(
         ['src/main/groovy', 'src/main/resources'].
             collect { file(it).absolutePath }.toArray(new String[2]),
-        project.class.classLoader
+        selfReferencingClassLoader
     ).loadScriptByName('org/ysb33r/gradle/gradletest/GradleTestPlugin.groovy')
 
     gradleLocations {

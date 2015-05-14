@@ -30,10 +30,10 @@ class Infrastructure {
      *  @li locations - A map containing gradle versions (as key) and their locations (as value).
      *  @li sourceDir - Source dreictory where tests are copied from
      *  @li initScript - URI of the initscript that will be used
-     *  @li versions - A list of versions that the compatibility tests will be execurted against
+     *  @li versions - A list of versions that the compatibility tests will be executed against
      *
      * @param settings Property map
-     * @return A list of TestRunner obkect which can be executed
+     * @return A list of TestRunner object which can be executed
      */
     static List<TestRunner> create( Map settings ) {
 
