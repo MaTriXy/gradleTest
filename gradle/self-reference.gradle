@@ -8,8 +8,11 @@ if(!project.properties.DISABLE_GRADLETEST) {
     // This might be confusing to people who have used the self-referencing trick before
     // Gradle does not directly make JARs in the lib/plugins fodler available at this point in the gradle script.
     // Therefore we need to create new classloader and add the jar we need.
+    def pluginURLs = fileTree ("${gradle.gradleHomeDir}/lib/plugins") { include '*.jar' } .files.collect {
+        it.toURI().toURL()
+    }
     def selfReferencingClassLoader = new URLClassLoader(
-        [ new File("${gradle.gradleHomeDir}/lib/plugins/gradle-plugins-${gradle.gradleVersion}.jar").toURI().toURL()].toArray(new URL[1]),
+        pluginURLs.toArray(new URL[pluginURLs.size()]),
         project.gradle.class.classLoader as URLClassLoader
     )
 

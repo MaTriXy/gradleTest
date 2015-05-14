@@ -110,6 +110,14 @@ class GradleTestExtension {
         this.searchFolders.addAll(project.files(files).files)
     }
 
+    /** Returns a {@code GradleInvocation} object that can be used to trigger Gradle builds.
+     *
+     * @return Returns {@link GradleInvocation} object or null if {@link #distributions} has not not been set yet
+     */
+    GradleInvocation getGradleInvocation() {
+        distributions ? new GradleInvocation(distributions.allDistributionsAsMap) : null
+    }
+
     /** Manages the set of available distributions.
      * If {@code null}, default until such time that its gets set during the
      * evaluation phase.

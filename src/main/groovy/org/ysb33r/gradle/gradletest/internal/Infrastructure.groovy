@@ -16,6 +16,7 @@ package org.ysb33r.gradle.gradletest.internal
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.WorkResult
+import org.ysb33r.gradle.gradletest.GradleInvocation
 
 /** Utiity class to aid in building the files structure for compatibility testing
  *
@@ -27,7 +28,7 @@ class Infrastructure {
      *  @li name - Name of the the test task (usually {@code gradleTest}).
      *  @li project - THe project that these tests are being built for
      *  @li tests - A list of tests to be executed
-     *  @li locations - A map containing gradle versions (as key) and their locations (as value).
+     *  @li invocations - A closure which returns a new GradleInvocation every time it is called
      *  @li sourceDir - Source dreictory where tests are copied from
      *  @li initScript - URI of the initscript that will be used
      *  @li versions - A list of versions that the compatibility tests will be executed against
@@ -39,15 +40,16 @@ class Infrastructure {
 
         final Project project = settings.project
         final List<String> tests = settings.tests
-        final Map<String,File> locations = settings.locations
+        final Closure invocationFactory = settings.invocations
         final String name = settings.name
         final File src = settings.sourceDir
         final Object initScript = settings.initScript
         final Set<String> versions = settings.versions
 
+
         assert project != null
         assert tests != null
-        assert locations != null
+        assert invocationFactory != null
         assert name != null
         assert src != null
         assert initScript != null
@@ -94,14 +96,20 @@ class Infrastructure {
             assert wr.didWork
 
             tests.each { test ->
+                GradleInvocation gradle = invocations()
+
+                gradle {
+                    gradleVersion = ver
+                    projectDir = new File(dest,test)
+                }
+
                 testRunners+= new TestRunner(
-                    project : project,
-                    gradleLocationDir : locations[ver],
-                    testProjectDir : new File(dest,test),
+                    gradleInvocation : gradle,
                     testName : test,
                     version : ver,
                     initScript : initGradle
                 )
+
                 logger.debug "Infrastructure: Created test runner for '${ver}:${test}'"
             }
         }

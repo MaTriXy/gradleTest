@@ -19,6 +19,7 @@ import org.gradle.api.tasks.testing.TestDescriptor
 import org.gradle.api.tasks.testing.TestResult
 import org.gradle.process.ExecResult
 import org.ysb33r.gradle.gradletest.CompatibilityTestResult
+import org.ysb33r.gradle.gradletest.GradleInvocation
 import org.ysb33r.gradle.gradletest.GradleTestDescriptor
 
 /**
@@ -27,56 +28,71 @@ import org.ysb33r.gradle.gradletest.GradleTestDescriptor
 @TupleConstructor
 class TestRunner  {
 
-    Project project
-    File gradleLocationDir
-    File testProjectDir
     File initScript
-    String version
     String testName
     long startTime
     long endTime
+    GradleInvocation gradleInvocation
 
     ExecResult execResult = null
 
     ExecResult run() {
 
-        File settings = new File(testProjectDir,'settings.gradle')
+        File settings = new File(gradleInvocation.projectDir,'settings.gradle')
 
         if(!settings.exists()) {
             settings.text = ''
         }
 
-        project.logger.info "Running ${testName} against Gradle ${version}"
+        project.logger.info "Running ${testName} against Gradle ${gradleInvocation.gradleVersion}"
 
         startTime = System.currentTimeMillis()
 
         try {
-            execResult = project.javaexec {
-                ignoreExitValue = true
-                classpath "${gradleLocationDir}/lib/gradle-launcher-${version}.jar"
-                workingDir testProjectDir.absoluteFile
 
-                main 'org.gradle.launcher.GradleMain'
-                args '--project-cache-dir',"${testProjectDir}/.gradle"
-                args '--gradle-user-home',  "${testProjectDir}/../home"
-                args '--no-daemon'
-                args '--full-stacktrace'
-                args '--info'
-                args '--init-script',initScript.absolutePath
-
-                if(project.gradle.startParameter.offline) {
-                    args '--offline'
-                }
-
-                args 'runGradleTest'
-
-                systemProperties 'org.gradle.appname' : this.class.name
-
-                // Capture standardOutput and errorOutput
-                // errorOutput = new ByteArrayOutputStream()
-                // standardOutput = new ByteArrayOutputStream()
-                // systemProperties & environment in a later release
+            gradleInvocation {
+                arguments '--project-cache-dir',"${gradleInvocation.projectDir}/.gradle"
+                arguments '--gradle-user-home',  "${gradleInvocation.projectDir}/../home"
+                arguments '--no-daemon'
+                arguments '--full-stacktrace'
+                arguments '--info'
+                arguments '--init-script', initScript.absolutePath
+                tasks = ['runGradleTest']
             }
+
+            if(gradleInvocation.initiatingProject.gradle.startParameter.offline) {
+                gradleInvocation.arguments '--offline'
+            }
+
+            execResult = gradleInvocation.run()
+//
+////                execResult = gradle.run(project)
+//            execResult = project.javaexec {
+//                ignoreExitValue = true
+//                classpath "${gradleLocationDir}/lib/gradle-launcher-${version}.jar"
+//                workingDir testProjectDir.absoluteFile
+//
+//                main 'org.gradle.launcher.GradleMain'
+//                args '--project-cache-dir',"${testProjectDir}/.gradle"
+//                args '--gradle-user-home',  "${testProjectDir}/../home"
+//                args '--no-daemon'
+//                args '--full-stacktrace'
+//                args '--info'
+//                args '--init-script',initScript.absolutePath
+//
+//                if(gradleInvocation.initiatingProject.gradle.startParameter.offline) {
+//                    args '--offline'
+//                }
+//
+//                args 'runGradleTest'
+//
+//                systemProperties 'org.gradle.appname' : this.class.name
+//
+//                // Capture standardOutput and errorOutput
+//                // errorOutput = new ByteArrayOutputStream()
+//                // standardOutput = new ByteArrayOutputStream()
+//                // systemProperties & environment in a later release
+//            }
         } finally {
             endTime = System.currentTimeMillis()
         }
@@ -87,7 +103,7 @@ class TestRunner  {
      * @return An object implementing the {@code org.gradle.api.tasks.testing.TestDescriptor} interface.
      */
     TestDescriptor getTestDescriptor() {
-        new GradleTestDescriptor( name:testName, gradleVersion: version )
+        new GradleTestDescriptor( name:testName, gradleVersion: gradleInvocation.gradleVersion )
     }
 
     /** Return the results of this test as a {@code TestResult} so that Gradle test infrastucture can absorb it.
@@ -114,7 +130,7 @@ class TestRunner  {
 
         new CompatibilityTestResult(
             testName : testName,
-            gradleVersion : ver,
+            gradleVersion : gradleInvocation.gradleVersion,
             resultType: result,
             startTime : startTime,
             endTime: endTime

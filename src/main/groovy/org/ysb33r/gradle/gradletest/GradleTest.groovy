@@ -154,7 +154,8 @@ class GradleTest extends DefaultTask {
         testRunners = Infrastructure.create(
             project : project,
             tests : testNames,
-            locations : locations,
+//            locations : locations,
+            invocations : { -> project.extensions.getByName(Names.EXTENSION).gradleInvocation },
             name : name,
             sourceDir : sourceDir,
             initScript : initScript,
