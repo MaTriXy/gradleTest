@@ -1,5 +1,45 @@
 = CHANGELOG
 
+== Experimental
+
+* Can we do something with Test?
+* TestFilter
+* TestFrameworkOptions
+* TestListener
+* TestLogEvent
+* TestLogging
+* TestLoggingContainer
+* TestOutputEvent
+* TestOutputEvent.Destination
+* TestOutputListener
+* TestReport
+* TestResult - Do we need an overall result?
+* TestStackTraceFilter
+* TestSuiteContainer
+* TestTaskReports
+* GradleBuildInvocationSpec
+* Implement VerificationTask interface on GradleTest
+* Implement Reporting<T> interface on GradleTest
+* implement
+.In 2.0, not found in later documentation
+* TestSuiteExecutableBinary
+
+.Not in 2.0 docs, check api
+* TestSuiteBinarySpec
+* TestSuiteSpec
+
+.For 2.4 only
+* TestFailureResult
+* TestFinishEvent
+* TestOperationDescriptor
+* TestOperationResult
+* TestProgressEvent
+* TestProgressListener
+* TestSkippedResult
+* TestStartEvent
+* TestSuccessResult
+
+
 == Roadmap - v1.0
 
 === Features
@@ -8,6 +48,11 @@
 * https://github.com/ysb33r/gradleTest/issues/3[#3] - Running counter of tests being executed
 * https://github.com/ysb33r/gradleTest/issues/4[#4] - Capture test output and add to test report
 * https://github.com/ysb33r/gradleTest/issues/5[#5] - Allow tests to be executed in parallel
+
+=== API
+* Support for `org.gradle.api.tasks.testing.TestDescriptor` objects have been added.
+* `gradleLocations` extensions now has a `gradleInvocation` which returns an object which implements the
+  'org.gradle.api.plugins.buildcomparison.gradle.GradleBuildInvocationSpec` interface.
 
 === Bugs
 * None

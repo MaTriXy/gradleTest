@@ -135,7 +135,7 @@ gradle script.
 The reason for this is that it can be q time-consuming testset to run. The typical
 case will be that the tests are only run close to release time. Some people might
 prefer to set `install.dependsOn gradleTest` rather than `check.dependsOn gradleTest`
-or `builddpendsOn gradleTest`.
+or `build.dependsOn gradleTest`.
 
 == Dependencies
 
