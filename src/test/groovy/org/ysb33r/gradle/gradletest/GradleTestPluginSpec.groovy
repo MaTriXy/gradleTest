@@ -15,6 +15,7 @@ package org.ysb33r.gradle.gradletest
 
 import org.gradle.api.Project
 import org.gradle.api.tasks.Delete
+import org.gradle.api.tasks.testing.Test
 import org.ysb33r.gradle.gradletest.internal.GradleTestDownloader
 import org.ysb33r.gradle.gradletest.internal.TestHelper
 import spock.lang.Specification
@@ -41,6 +42,18 @@ class GradleTestPluginSpec extends Specification {
         project.tasks.getByName(Names.CLEAN_DOWNLOADER_TASK) instanceof Delete
         project.tasks.getByName(Names.CLEAN_DOWNLOADER_TASK).description?.size()
 
+    }
+
+    def "Applying the plugin adds compilation and test tasks"() {
+        given:
+        project.with {
+            apply plugin : 'org.ysb33r.gradletest'
+        }
+
+        expect:
+        project.tasks.getByName('gradleTestRunner') instanceof Test
+        project.configurations.findByName('gradleTestCompile')
+        project.configurations.findByName('gradleTestRuntime')
     }
 
     def 'Effect of plugin on afterEvaluate'() {

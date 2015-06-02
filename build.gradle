@@ -60,6 +60,7 @@ repositories {
 dependencies {
 	compile gradleApi()
 	compile localGroovy()
+	testCompile fileTree( dir : "${gradle.gradleUserHomeDir}/lib/plugins", include : "gradle-plugins-${gradle.gradleVersion}.jar" )
 	testCompile ('org.spockframework:spock-core:1.0-groovy-2.3') {
 		exclude module : 'groovy-all'
 	}

@@ -19,6 +19,7 @@ import org.gradle.api.Task
 import org.gradle.api.execution.TaskExecutionListener
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.TaskState
+import org.gradle.api.tasks.testing.Test
 import org.ysb33r.gradle.gradletest.internal.AvailableDistributionsInternal
 import org.ysb33r.gradle.gradletest.internal.DistributionInternal
 import org.ysb33r.gradle.gradletest.internal.GradleTestDownloader
@@ -47,6 +48,8 @@ class GradleTestPlugin implements Plugin<Project> {
 
             // When downloader fininshed we want the extension to have the new distributions added
             gradle.addListener( createUpdateListener() )
+
+            addGradleTestCompilation(project)
 
             afterEvaluate { Project p ->
 
@@ -82,6 +85,39 @@ class GradleTestPlugin implements Plugin<Project> {
         }
     }
 
+    // Hacked together with Vladimír Orany
+    // Vincenzo Forchi
+    void addGradleTestCompilation(Project project) {
+        project.with {
+            configurations {
+                gradleTestCompile {
+                    extendsFrom testCompile
+                }
+                gradleTestRuntime {
+                    extendsFrom gradleTestCompile, testRuntime
+                }
+            }
+
+            sourceSets {
+                gradleTestRunner2 {
+                    java.srcDir "${buildDir}/gradleTest/generated"
+//                    groovy.srcDir "${buildDir}/gradleTest/generated"
+//                    resources.srcDir file("src/integrationTest/resources")
+                    compileClasspath = sourceSets.main.output +  configurations.gradleTestCompile
+                    runtimeClasspath = output + compileClasspath + configurations.gradleTestRuntime
+                }
+            }
+
+            def runner = tasks.create('gradleTestRunner',Test)
+            runner.configure {
+                dependsOn 'jar'
+                testClassesDir = sourceSets.gradleTestRunner2.output.classesDir
+                classpath = sourceSets.gradleTestRunner2.runtimeClasspath
+                mustRunAfter 'test'
+            }
+
+        }
+    }
     /** Creates a a listener which will update the Gradle Distribution Extension with the location of
      * downloaded (and unpacked) distributions
      *
