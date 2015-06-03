@@ -100,7 +100,8 @@ class GradleTestPlugin implements Plugin<Project> {
 
             sourceSets {
                 gradleTestRunner2 {
-                    java.srcDir "${buildDir}/gradleTest/generated"
+                    java.srcDir "src/resources/org/ysb33r/gradletest"
+//                    java.srcDir "${buildDir}/gradleTest/generated"
 //                    groovy.srcDir "${buildDir}/gradleTest/generated"
 //                    resources.srcDir file("src/integrationTest/resources")
                     compileClasspath = sourceSets.main.output +  configurations.gradleTestCompile
@@ -116,6 +117,7 @@ class GradleTestPlugin implements Plugin<Project> {
                 mustRunAfter 'test'
             }
 
+            // TODO : Copy class from resources
         }
     }
     /** Creates a a listener which will update the Gradle Distribution Extension with the location of
