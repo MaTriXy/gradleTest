@@ -83,7 +83,8 @@ class InfrastructureIntegrationSpec extends Specification {
             name : Names.DEFAULT_TASK,
             sourceDir : simpleTestDestDir,
             initScript : initScript,
-            versions : [ gradleVersion ]
+            versions : [ gradleVersion ],
+            invocations : { -> }
         )
 
         then: "These files must be created"
