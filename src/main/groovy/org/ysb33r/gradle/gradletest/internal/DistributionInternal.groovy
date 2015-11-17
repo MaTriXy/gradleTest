@@ -31,10 +31,8 @@ import java.util.regex.Matcher
  * @author Schalk W. Cronjé
  */
 @TupleConstructor
-@Sortable(excludes=['location'])
-@EqualsAndHashCode(excludes=['location'])
 @ToString
-class DistributionInternal implements Distribution {
+class DistributionInternal extends Distribution {
 
     String version
     File location

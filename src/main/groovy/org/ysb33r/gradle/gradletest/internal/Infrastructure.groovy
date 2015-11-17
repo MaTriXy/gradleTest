@@ -35,7 +35,7 @@ class Infrastructure {
      * @param settings Property map
      * @return A list of TestRunner obkect which can be executed
      */
-    static List<TestRunner> create( Map settings ) {
+    static List<LegacyTestRunner> create( Map settings ) {
 
         final Project project = settings.project
         final List<String> tests = settings.tests
@@ -58,7 +58,7 @@ class Infrastructure {
         final File repo = new File( baseDir,"repo" )
         final Logger logger = project.logger
 
-        List<TestRunner> testRunners = []
+        List<LegacyTestRunner> testRunners = []
         WorkResult wr
 
         logger.debug "Infrastructure: Copying initscript from '${initScript}'"
@@ -94,7 +94,7 @@ class Infrastructure {
             assert wr.didWork
 
             tests.each { test ->
-                testRunners+= new TestRunner(
+                testRunners+= new LegacyTestRunner(
                     project : project,
                     gradleLocationDir : locations[ver],
                     testProjectDir : new File(dest,test),

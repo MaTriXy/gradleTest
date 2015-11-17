@@ -10,18 +10,26 @@ if(!project.properties.DISABLE_GRADLETEST) {
         project.class.classLoader
     ).loadScriptByName('org/ysb33r/gradle/gradletest/GradleTestPlugin.groovy')
 
-    gradleLocations {
-        if( System.getenv('APPVEYOR') || project.properties.TRAVIS_CI?.size()) {
-            downloadToGradleUserHome = false
-            searchGradleUserHome = true
-            searchGvm = false
-        } else {
-            downloadToGradleUserHome = true
+    def versionCheck = gradle.gradleVersion =~ /(\d+)\.(\d+)([-\.].+)?/
+    int major = (versionCheck[0][1] as String).toInteger()
+    int minor = (versionCheck[0][2] as String).toInteger()
+
+    if(major >= 2 && minor < 9 ) {
+        gradleLocations {
+            if( System.getenv('APPVEYOR') || project.properties.TRAVIS_CI?.size()) {
+                downloadToGradleUserHome = false
+                searchGradleUserHome = true
+                searchGvm = false
+            } else {
+                downloadToGradleUserHome = true
+            }
         }
+    } else {
+        logger.warn "Currently ignoring gradleLocations as version is $gradle.gradleVersion}"
     }
 
     gradleTest {
-        versions '2.0', '2.1', '2.2', '2.3', '2.4', '2.5'
+        versions '2.0', '2.1', '2.2', '2.3', '2.4', '2.5','2.6','2.7','2.8','2.9'
         dependsOn 'integrationTest', 'test'
     }
 

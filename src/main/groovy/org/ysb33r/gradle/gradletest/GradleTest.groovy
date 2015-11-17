@@ -15,22 +15,19 @@ package org.ysb33r.gradle.gradletest
 
 import groovy.transform.CompileStatic
 import groovy.transform.TypeChecked
-import org.apache.commons.lang.NotImplementedException
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectories
-import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.SkipWhenEmpty
 import org.gradle.api.tasks.StopActionException
-import org.gradle.api.tasks.StopExecutionException
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskExecutionException
 import org.gradle.util.CollectionUtils
 import org.ysb33r.gradle.gradletest.internal.Infrastructure
-import org.ysb33r.gradle.gradletest.internal.TestRunner
+import org.ysb33r.gradle.gradletest.internal.LegacyTestRunner
 
 /**
  * @author Schalk W. Cronjé
@@ -112,7 +109,7 @@ class GradleTest extends DefaultTask {
             return null
         }
 
-        testRunners.collect { TestRunner run ->
+        testRunners.collect { LegacyTestRunner run ->
             [ getTestName : {run.testName},
               getGradleVersion : {run.version},
               getPassed : {run.execResult.exitValue == 0}
@@ -193,7 +190,7 @@ class GradleTest extends DefaultTask {
     }
 
     private List<Object> versions = []
-    private List<TestRunner> testRunners = []
+    private List<LegacyTestRunner> testRunners = []
     private Object initScript
     private final static String  INIT_GRADLE_PATH = 'org.ysb33r.gradletest/init.gradle'
 

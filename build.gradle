@@ -12,6 +12,7 @@ buildscript {
 		classpath 'org.ysb33r.gradle:bintray:1.5'
 		classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:3.1.0'
 		classpath "com.gradle.publish:plugin-publish-plugin:0.9.0"
+		classpath "com.netflix.nebula:gradle-extra-configurations-plugin:2.2.2"
 
 		// See: https://github.com/hierynomus/license-gradle-plugin/issues/67
 		classpath 'nl.javadude.gradle.plugins:license-gradle-plugin:0.11.0', {
@@ -27,12 +28,13 @@ apply plugin : 'maven'
 apply plugin : 'com.jfrog.artifactory'
 apply plugin : 'com.gradle.plugin-publish'
 apply plugin : 'com.github.hierynomus.license'
+apply plugin : 'nebula.provided-base'
 apply   from : 'gradle/integration-tests.gradle'
 apply   from : 'gradle/self-reference.gradle'
 
 group = 'org.ysb33r.gradle'
 archivesBaseName = 'gradletest'
-version = '0.5.4'
+version = '0.6-SNAPSHOT'
 
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
@@ -41,6 +43,8 @@ ext {
 	bintrayOwner = 'ysb33r'
 	bintrayRepo = 'grysb33r'
 	moduleName = 'gradletest-gradle-plugin'
+
+	spockGroovyVer = GroovySystem.version.replaceAll(/\.\d+$/,'')
 }
 
 repositories {
@@ -60,7 +64,10 @@ repositories {
 dependencies {
 	compile gradleApi()
 	compile localGroovy()
-	testCompile ('org.spockframework:spock-core:1.0-groovy-2.3') {
+	provided ("org.spockframework:spock-core:1.0-groovy-${spockGroovyVer}") {
+		exclude module : 'groovy-all'
+	}
+	testCompile ("org.spockframework:spock-core:1.0-groovy-${spockGroovyVer}") {
 		exclude module : 'groovy-all'
 	}
 	integrationTestDistro ':gradle:2.1:bin@zip'

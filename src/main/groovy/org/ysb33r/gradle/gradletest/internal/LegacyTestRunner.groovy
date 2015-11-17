@@ -21,7 +21,7 @@ import org.gradle.process.ExecResult
  * @author Schalk W. Cronjé
  */
 @TupleConstructor
-class TestRunner {
+class LegacyTestRunner {
 
     Project project
     File gradleLocationDir

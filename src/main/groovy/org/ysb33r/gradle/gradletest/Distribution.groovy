@@ -13,10 +13,15 @@
  */
 package org.ysb33r.gradle.gradletest
 
+import groovy.transform.EqualsAndHashCode
+import groovy.transform.Sortable
+
 /**
  * @author Schalk W. Cronjé
  */
-interface Distribution extends Comparable {
-    String getVersion()
-    File getLocation()
+@EqualsAndHashCode(excludes=['location'])
+@Sortable(excludes=['location'])
+abstract class Distribution  {
+    abstract String getVersion()
+    abstract File getLocation()
 }
